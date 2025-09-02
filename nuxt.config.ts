@@ -6,6 +6,6 @@ export default defineNuxtConfig({
   //   preset: 'node-server'
   // },
   app: {
-    baseURL: '/usagi/',
+    baseURL: '/usagi-nuxtjs/',
   }
 })
