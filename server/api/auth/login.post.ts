@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   if (!username || !password) {
     throw createError({
       statusCode: 400,
-      statusMessage: '用户名和密码不能为空'
+      message: '用户名和密码不能为空'
     })
   }
 
@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
     if (!user) {
       throw createError({
         statusCode: 401,
-        statusMessage: '用户名或密码错误'
+        message: '用户名或密码错误'
       })
     }
 
@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
     if (!isValidPassword) {
       throw createError({
         statusCode: 401,
-        statusMessage: '用户名或密码错误'
+        message: '用户名或密码错误'
       })
     }
 
@@ -45,11 +45,16 @@ export default defineEventHandler(async (event) => {
         token
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('登录错误:', error)
+    // 如果是已经创建的错误，直接抛出
+    if (error.statusCode) {
+      throw error
+    }
+    // 否则创建新的错误
     throw createError({
       statusCode: 500,
-      statusMessage: '登录失败，请稍后重试'
+      message: '登录失败，请稍后重试'
     })
   }
 })

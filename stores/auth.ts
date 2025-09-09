@@ -62,9 +62,22 @@ export const useAuthStore = defineStore('auth', {
         } else {
           throw new Error(response.message || '登录失败')
         }
-      } catch (error) {
+      } catch (error: any) {
         this.clearAuth()
-        throw error
+        // Nuxt 4 错误处理：检查错误响应数据
+        if (error.response?.data?.message) {
+          throw new Error(error.response.data.message)
+        } else if (error.response?.status === 401) {
+          throw new Error('用户名或密码错误')
+        } else if (error.response?.status === 400) {
+          throw new Error('请求参数错误')
+        } else if (error.response?.status === 500) {
+          throw new Error('服务器内部错误，请稍后重试')
+        } else if (error.message?.includes('fetch')) {
+          throw new Error('网络连接错误，请检查网络')
+        } else {
+          throw new Error(error.message || '登录失败，请稍后重试')
+        }
       }
     },
 
@@ -81,9 +94,22 @@ export const useAuthStore = defineStore('auth', {
         } else {
           throw new Error(response.message || '注册失败')
         }
-      } catch (error) {
+      } catch (error: any) {
         this.clearAuth()
-        throw error
+        // Nuxt 4 错误处理：检查错误响应数据
+        if (error.response?.data?.message) {
+          throw new Error(error.response.data.message)
+        } else if (error.response?.status === 400) {
+          throw new Error('请求参数错误')
+        } else if (error.response?.status === 409) {
+          throw new Error('用户名或邮箱已存在')
+        } else if (error.response?.status === 500) {
+          throw new Error('服务器内部错误，请稍后重试')
+        } else if (error.message?.includes('fetch')) {
+          throw new Error('网络连接错误，请检查网络')
+        } else {
+          throw new Error(error.message || '注册失败，请稍后重试')
+        }
       }
     },
 

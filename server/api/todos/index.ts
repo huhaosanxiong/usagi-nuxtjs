@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     throw createError({
       statusCode: 401,
-      statusMessage: '未授权访问'
+      message: '未授权访问'
     })
   }
 
@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
   if (!decoded) {
     throw createError({
       statusCode: 401,
-      statusMessage: '无效的令牌'
+      message: '无效的令牌'
     })
   }
 
@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
       console.error('获取待办事项错误:', error)
       throw createError({
         statusCode: 500,
-        statusMessage: '获取待办事项失败'
+        message: '获取待办事项失败'
       })
     }
   }
@@ -47,7 +47,7 @@ export default defineEventHandler(async (event) => {
     if (!title) {
       throw createError({
         statusCode: 400,
-        statusMessage: '待办事项标题不能为空'
+        message: '待办事项标题不能为空'
       })
     }
 
@@ -62,7 +62,7 @@ export default defineEventHandler(async (event) => {
       console.error('创建待办事项错误:', error)
       throw createError({
         statusCode: 500,
-        statusMessage: '创建待办事项失败'
+        message: '创建待办事项失败'
       })
     }
   }

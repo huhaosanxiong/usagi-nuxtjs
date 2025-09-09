@@ -5,7 +5,9 @@
       "Bash(npm run dev:*)",
       "Bash(lsof:*)",
       "Bash(kill:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(yarn add:*)",
+      "Bash(pkill:*)"
     ],
     "deny": [],
     "ask": []
