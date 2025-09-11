@@ -3,7 +3,7 @@ import mysql from 'mysql2/promise'
 export const db = mysql.createPool({
   host: 'localhost',
   user: 'huhsx',
-  password: 'AGsYkSSjHfhEbYyN',
+  password: 'SPXjL6ays6AyT2ZX',
   database: 'nuxt_todo_app',
   waitForConnections: true,
   connectionLimit: 10,
