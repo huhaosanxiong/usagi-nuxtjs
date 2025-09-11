@@ -1,52 +1,74 @@
 import { deleteTodo, verifyToken } from '../../../utils/models'
+import { logApiRequest, logApiError } from '../../../utils/logger'
 
 export default defineEventHandler(async (event) => {
   const authHeader = getHeader(event, 'authorization')
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw createError({
+    const error = {
       statusCode: 401,
       message: '未授权访问'
-    })
+    }
+    logApiError('DELETE', `/api/todos/${getRouterParam(event, 'id')}`, null, error)
+    throw createError(error)
   }
 
   const token = authHeader.substring(7)
   const decoded = verifyToken(token)
   if (!decoded) {
-    throw createError({
+    const error = {
       statusCode: 401,
       message: '无效的令牌'
-    })
+    }
+    logApiError('DELETE', `/api/todos/${getRouterParam(event, 'id')}`, null, error)
+    throw createError(error)
   }
 
   const userId = decoded.userId
   const todoId = getRouterParam(event, 'id')
   
   if (!todoId || isNaN(Number(todoId))) {
-    throw createError({
+    const error = {
       statusCode: 400,
       message: '无效的待办事项ID'
-    })
+    }
+    logApiError('DELETE', `/api/todos/${todoId}`, null, error, userId)
+    throw createError(error)
   }
 
   try {
     const deleted = await deleteTodo(Number(todoId), userId)
     
     if (!deleted) {
-      throw createError({
+      const error = {
         statusCode: 404,
         message: '待办事项不存在'
-      })
+      }
+      logApiError('DELETE', `/api/todos/${todoId}`, null, error, userId)
+      throw createError(error)
     }
 
-    return {
+    const result = {
       success: true,
       message: '待办事项删除成功'
     }
+    
+    // 记录成功日志
+    logApiRequest('DELETE', `/api/todos/${todoId}`, null, result, userId)
+    
+    return result
   } catch (error) {
     console.error('删除待办事项错误:', error)
-    throw createError({
+    // 如果是已经创建的错误，记录日志并重新抛出
+    if (error.statusCode) {
+      logApiError('DELETE', `/api/todos/${todoId}`, null, error, userId)
+      throw error
+    }
+    // 否则创建新的错误
+    const newError = {
       statusCode: 500,
       message: '删除待办事项失败'
-    })
+    }
+    logApiError('DELETE', `/api/todos/${todoId}`, null, newError, userId)
+    throw createError(newError)
   }
 })
