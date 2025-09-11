@@ -444,7 +444,7 @@ const editTodo = (todo) => {
     title: todo.title,
     description: todo.description || '',
     priority: todo.priority,
-    due_date: todo.due_date || ''
+    due_date: todo.due_date ? formatDateForInput(todo.due_date) : ''
   }
 }
 
@@ -550,6 +550,16 @@ const getPriorityText = (priority) => {
 
 const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString('zh-CN')
+}
+
+// 将日期转换为 YYYY-MM-DD 格式用于日期选择器
+const formatDateForInput = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 onMounted(async () => {
