@@ -11,7 +11,9 @@
       "Bash(cat:*)",
       "Bash(npm run pm2:start:*)",
       "Bash(npm run pm2:status:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "WebSearch",
+      "WebFetch(domain:nuxt.com)"
     ],
     "deny": [],
     "ask": []

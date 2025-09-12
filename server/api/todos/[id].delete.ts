@@ -1,5 +1,4 @@
 import { deleteTodo, verifyToken } from '../../../utils/models'
-import { logApiRequest, logApiError } from '../../../utils/logger'
 
 export default defineEventHandler(async (event) => {
   const authHeader = getHeader(event, 'authorization')
@@ -8,7 +7,6 @@ export default defineEventHandler(async (event) => {
       statusCode: 401,
       message: '未授权访问'
     }
-    logApiError('DELETE', `/api/todos/${getRouterParam(event, 'id')}`, null, error)
     throw createError(error)
   }
 
@@ -19,7 +17,6 @@ export default defineEventHandler(async (event) => {
       statusCode: 401,
       message: '无效的令牌'
     }
-    logApiError('DELETE', `/api/todos/${getRouterParam(event, 'id')}`, null, error)
     throw createError(error)
   }
 
@@ -31,7 +28,6 @@ export default defineEventHandler(async (event) => {
       statusCode: 400,
       message: '无效的待办事项ID'
     }
-    logApiError('DELETE', `/api/todos/${todoId}`, null, error, userId)
     throw createError(error)
   }
 
@@ -43,7 +39,6 @@ export default defineEventHandler(async (event) => {
         statusCode: 404,
         message: '待办事项不存在'
       }
-      logApiError('DELETE', `/api/todos/${todoId}`, null, error, userId)
       throw createError(error)
     }
 
@@ -52,15 +47,11 @@ export default defineEventHandler(async (event) => {
       message: '待办事项删除成功'
     }
     
-    // 记录成功日志
-    logApiRequest('DELETE', `/api/todos/${todoId}`, null, result, userId)
-    
     return result
-  } catch (error) {
+  } catch (error: any) {
     console.error('删除待办事项错误:', error)
     // 如果是已经创建的错误，记录日志并重新抛出
     if (error.statusCode) {
-      logApiError('DELETE', `/api/todos/${todoId}`, null, error, userId)
       throw error
     }
     // 否则创建新的错误
@@ -68,7 +59,6 @@ export default defineEventHandler(async (event) => {
       statusCode: 500,
       message: '删除待办事项失败'
     }
-    logApiError('DELETE', `/api/todos/${todoId}`, null, newError, userId)
     throw createError(newError)
   }
 })

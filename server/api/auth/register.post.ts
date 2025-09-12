@@ -1,5 +1,4 @@
 import { createUser, getUserByUsername, getUserByEmail, verifyPassword, generateToken } from '../../../utils/models'
-import { logApiRequest, logApiError } from '../../../utils/logger'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
@@ -10,7 +9,6 @@ export default defineEventHandler(async (event) => {
       statusCode: 400,
       message: '用户名、邮箱和密码不能为空'
     }
-    logApiError('POST', '/api/auth/register', body, error)
     throw createError(error)
   }
 
@@ -19,7 +17,6 @@ export default defineEventHandler(async (event) => {
       statusCode: 400,
       message: '密码长度至少为6位'
     }
-    logApiError('POST', '/api/auth/register', body, error)
     throw createError(error)
   }
 
@@ -31,7 +28,6 @@ export default defineEventHandler(async (event) => {
         statusCode: 400,
         message: '用户名已存在'
       }
-      logApiError('POST', '/api/auth/register', body, error)
       throw createError(error)
     }
 
@@ -42,7 +38,6 @@ export default defineEventHandler(async (event) => {
         statusCode: 400,
         message: '邮箱已被注册'
       }
-      logApiError('POST', '/api/auth/register', body, error)
       throw createError(error)
     }
 
@@ -63,15 +58,11 @@ export default defineEventHandler(async (event) => {
       }
     }
     
-    // 记录成功日志
-    logApiRequest('POST', '/api/auth/register', body, result, user.id)
-    
     return result
   } catch (error: any) {
     console.error('注册错误:', error)
     // 如果是已经创建的错误，记录日志并重新抛出
     if (error.statusCode) {
-      logApiError('POST', '/api/auth/register', body, error)
       throw error
     }
     // 否则创建新的错误
@@ -79,7 +70,6 @@ export default defineEventHandler(async (event) => {
       statusCode: 500,
       message: '注册失败，请稍后重试'
     }
-    logApiError('POST', '/api/auth/register', body, newError)
     throw createError(newError)
   }
 })
