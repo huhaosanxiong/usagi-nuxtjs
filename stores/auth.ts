@@ -24,8 +24,12 @@ export const useAuthStore = defineStore('auth', {
       this.token = token
       this.isAuthenticated = true
       // 保存到localStorage
-      localStorage.setItem('token', token)
-      localStorage.setItem('user', JSON.stringify(user))
+      try {
+        localStorage.setItem('token', token)
+        localStorage.setItem('user', JSON.stringify(user))
+      } catch (error) {
+        console.error('保存认证信息到localStorage失败:', error)
+      }
     },
 
     clearAuth() {
@@ -33,19 +37,29 @@ export const useAuthStore = defineStore('auth', {
       this.token = null
       this.isAuthenticated = false
       // 清除localStorage
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
+      try {
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+      } catch (error) {
+        console.error('清除localStorage认证信息失败:', error)
+      }
     },
 
     // 从localStorage恢复认证状态
     restoreAuth() {
-      const token = localStorage.getItem('token')
-      const user = localStorage.getItem('user')
-      
-      if (token && user) {
-        this.user = JSON.parse(user)
-        this.token = token
-        this.isAuthenticated = true
+      try {
+        const token = localStorage.getItem('token')
+        const user = localStorage.getItem('user')
+        
+        if (token && user) {
+          this.user = JSON.parse(user)
+          this.token = token
+          this.isAuthenticated = true
+        }
+      } catch (error) {
+        console.error('从localStorage恢复认证状态失败:', error)
+        // 如果localStorage访问失败，清除认证状态
+        this.clearAuth()
       }
     },
 

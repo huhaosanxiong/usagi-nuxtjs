@@ -5,11 +5,17 @@ import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
 
 onMounted(() => {
-  authStore.restoreAuth()
-  
-  if (authStore.isLoggedIn) {
-    navigateTo('/dashboard')
-  } else {
+  try {
+    authStore.restoreAuth()
+    
+    if (authStore.isLoggedIn) {
+      navigateTo('/dashboard')
+    } else {
+      navigateTo('/login')
+    }
+  } catch (error) {
+    console.error('认证状态恢复失败:', error)
+    // 如果认证状态恢复失败，也重定向到登录页面
     navigateTo('/login')
   }
 })
