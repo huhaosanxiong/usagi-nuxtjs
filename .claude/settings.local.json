@@ -13,9 +13,13 @@
       "Bash(npm run pm2:status:*)",
       "Bash(curl:*)",
       "WebSearch",
-      "WebFetch(domain:nuxt.com)"
+      "WebFetch(domain:nuxt.com)",
+      "Bash(brew:*)",
+      "Bash(mysql:*)",
+      "Bash(/usr/local/mysql/bin/mysql:*)"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "hasCompletedOnboarding": true
 }

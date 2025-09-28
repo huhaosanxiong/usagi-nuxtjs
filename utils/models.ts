@@ -127,6 +127,7 @@ export async function updateTodo(id: number, userId: number, updates: Partial<To
   if (fields.length === 0) {
     return getTodoById(id, userId)
   }
+  console.log(fields, values);
   
   values.push(id, userId)
   await db.execute(
