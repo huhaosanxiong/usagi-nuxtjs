@@ -17,13 +17,9 @@ export const db = mysql.createPool({
 // 初始化数据库表
 export async function initDatabase() {
   try {
-    // 删除现有表（如果存在）
-    await db.execute(`DROP TABLE IF EXISTS todos`)
-    await db.execute(`DROP TABLE IF EXISTS users`)
-
-    // 创建用户表
+    // 检查用户表是否存在，不存在则创建
     await db.execute(`
-      CREATE TABLE users (
+      CREATE TABLE IF NOT EXISTS users (
         id INT PRIMARY KEY AUTO_INCREMENT,
         username VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci UNIQUE NOT NULL,
         email VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci UNIQUE NOT NULL,
@@ -33,9 +29,9 @@ export async function initDatabase() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `)
 
-    // 创建待办事项表
+    // 检查待办事项表是否存在，不存在则创建
     await db.execute(`
-      CREATE TABLE todos (
+      CREATE TABLE IF NOT EXISTS todos (
         id INT PRIMARY KEY AUTO_INCREMENT,
         user_id INT NOT NULL,
         title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -48,6 +44,15 @@ export async function initDatabase() {
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `)
+
+    // 修改现有表的字符集（如果存在）
+    try {
+      await db.execute(`ALTER TABLE users CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`)
+      await db.execute(`ALTER TABLE todos CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`)
+    } catch (error) {
+      // 忽略表不存在或其他错误
+      console.log('修改表字符集，表可能不存在或已经是utf8mb4')
+    }
 
     console.log('数据库初始化完成')
   } catch (error) {
